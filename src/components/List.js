@@ -6,7 +6,12 @@ const List = React.memo(({ todoData, setTodoData, deleteClick }) => {
   return (
     <div>
       {todoData.map((item) => (
-        <ListItem item={item} todoData={todoData} setTodoData={setTodoData} deleteClick={deleteClick} />
+        <ListItem
+          item={item}
+          todoData={todoData}
+          setTodoData={setTodoData}
+          deleteClick={deleteClick}
+        />
       ))}
     </div>
   );

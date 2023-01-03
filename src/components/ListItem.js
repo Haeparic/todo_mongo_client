@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 
 const ListItem = React.memo(({ item, todoData, setTodoData, deleteClick }) => {
@@ -43,13 +44,24 @@ const ListItem = React.memo(({ item, todoData, setTodoData, deleteClick }) => {
       }
       return item;
     });
+    let body = {
+      id: todoId,
+      title: editedTitle,
+    };
     // 데이터 갱신
     // axios 를 이용해서 MongoDB 타이틀 업데이트
-    setTodoData(tempTodo);
+    axios
+      .post("/api/post/updatetitle", body)
+      .then((res) => {
+        setTodoData(tempTodo);
+        // 목록창으로 이동
+        setIsEditing(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     // 로컬에 저장한다 (DB 예정)
-    localStorage.setItem("todoData", JSON.stringify(tempTodo));
-    // 목록창으로 이동
-    setIsEditing(false);
+    // localStorage.setItem("todoData", JSON.stringify(tempTodo));
   };
 
   const toggleClick = (id) => {
@@ -61,14 +73,30 @@ const ListItem = React.memo(({ item, todoData, setTodoData, deleteClick }) => {
         // } else {
         //   item.completed = true;
         // }
+        // 할일목록의 값을 번경한다
+        // ! 의 의미는 반대값으로 변경한다
         item.completed = !item.completed;
       }
       return item;
     });
-    // axios 를 이용해서 MongoDB 업데이트
-    setTodoData(updateTodo);
+    let body = {
+      id: todoId,
+      completed: item.completed,
+    };
+    // axios 를 이용해서 MongoDB complete 업데이트
+    // then() : 서버에서 회신(응답)이 왔을때 처리
+    // catch() : 서버에서 응답이 없을때
+    axios
+      .post("/api/post/updatetoggle", body)
+      .then((res) => {
+        // console.log(res);
+        setTodoData(updateTodo);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     // 로컬에 저장한다 (DB 예정)
-    localStorage.setItem("todoData", JSON.stringify(updateTodo));
+    // localStorage.setItem("todoData", JSON.stringify(updateTodo));
   };
 
   if (isEditing) {
