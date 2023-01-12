@@ -12,6 +12,7 @@ const ListItem = React.memo(({ item, todoData, setTodoData, deleteClick }) => {
   // 편집창에는 타이틀이 먼저 작정되어 있어야 하므로로
   const [editedTitle, setEditedTitle] = useState(item.title);
 
+  // console.log(item);
   // const deleteClick = (id) => {
   //   // 클릭된 id 와 다른 요소들만 걸러서 새로운 배열 생성
   //   const nowTodo = todoData.filter((item) => item.id !== id);
@@ -98,6 +99,41 @@ const ListItem = React.memo(({ item, todoData, setTodoData, deleteClick }) => {
     // 로컬에 저장한다 (DB 예정)
     // localStorage.setItem("todoData", JSON.stringify(updateTodo));
   };
+  // 날짜 출력
+  const showTime = (_timestamp) => {
+    const date = new Date(_timestamp);
+    // const WEEKDAY = ["일", "월", "화", "수", "목", "금", "토"];
+    let months = date.getMonth();
+    months = months + 1 < 9 ? "0" + (months + 1) : months + 1;
+    // 시간 오전, 오후 표시
+    let hours = date.getHours();
+    let ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    hours = hours < 10 ? "0" + hours : hours;
+    // 분 표시
+    let minutes = date.getMinutes();
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    let seconds = date.getSeconds();
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+    let time = date.getFullYear();
+    time += "/";
+    time += months;
+    time += "/";
+    time += date.getDate();
+    // time += "/";
+    // time += WEEKDAY[date.getDay()];
+    time += " ";
+    time += hours;
+    time += ":";
+    time += minutes;
+    time += ":";
+    time += seconds;
+    time += " ";
+    time += ampm;
+    return time;
+  };
 
   if (isEditing) {
     // 편집일때 JSX 리턴
@@ -133,12 +169,14 @@ const ListItem = React.memo(({ item, todoData, setTodoData, deleteClick }) => {
               type="checkbox"
               defaultChecked={item.completed}
               onChange={() => toggleClick(item.id)}
+              className="mx-2"
             />
             <span className={item.completed ? "line-through" : "none"}>
               {item.title}
             </span>
           </div>
           <div className="items-center">
+            <span>{showTime(item.id)}</span>
             <button
               className="px-4 py-2"
               onClick={() => {
